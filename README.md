@@ -1,21 +1,9 @@
 ### Hi there 👋 I'm WeiseRatel 👨‍💻
 
-<p align="center">
+![WeiseRatel's GitHub stats](https://github-readme-stats.vercel.app/api?username=weiseratel&show_icons=true&theme=default)
 
-  <h4 align="center">Top langs :tongue:</h4>
+![WeiseRatel top langs](https://github-readme-stats.vercel.app/api/top-langs/?username=AnhellO&langs_count=10&theme=tokyonight&layout=compact)
 
-  <p align="center">
-    <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=weiseratel&langs_count=10&theme=tokyonight&layout=compact" alt="WeiseRatel: Top Langs" />
-  </p>
-  
-  <h4 align="center">GitHub stats :tongue:</h4>
-  
-  <p align="center">
-    ![WeiseRatel's GitHub stats](https://github-readme-stats.vercel.app/api?username=weiseratel&show_icons=true&theme=default)
-  </p>
-
-</p>  
-  
 <!--
 **weiseratel/weiseratel** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
