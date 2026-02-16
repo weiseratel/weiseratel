@@ -29,6 +29,8 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Setup git credentials for org repos
+        run: git config --global url."https://${{ secrets.METRICS_TOKEN }}@github.com/".insteadOf "https://github.com/"
       - uses: lowlighter/metrics@master
         with:
           token: ${{ secrets.METRICS_TOKEN }}
