@@ -29,6 +29,8 @@ My work spans from API development to infrastructure optimization, with a strong
 
 <img src="https://github-readme-stats.vercel.app/api?username=weiseratel&show_icons=true&theme=github_dark&hide_border=true&bg_color=00000000" alt="GitHub Stats" />
 
+<img src="/languages.svg" alt="Top Languages" />
+
 ---
 
 [LinkedIn](https://www.linkedin.com/in/weiseratel) · [ratelbau.com](https://ratelbau.com)
