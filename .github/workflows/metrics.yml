@@ -7,6 +7,23 @@ on:
     branches: ["main"]
 
 jobs:
+  stats:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: lowlighter/metrics@v3.34
+        with:
+          token: ${{ secrets.METRICS_TOKEN }}
+          user: weiseratel
+          base: header, activity, community, repositories
+          base_indepth: yes
+          repositories_affiliations: owner, collaborator, organization_member
+          commits_authoring: >-
+            weiseratel, vladernu@gmail.com, 109978789+weiseratel@users.noreply.github.com
+          filename: stats.svg
+          config_timezone: Europe/Madrid
+
   languages:
     runs-on: ubuntu-latest
     permissions:
