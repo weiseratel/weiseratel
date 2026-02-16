@@ -29,14 +29,9 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Test git clone with token
-        run: |
-          echo "Testing git clone with METRICS_TOKEN..."
-          git clone --depth=1 https://x-access-token:${{ secrets.METRICS_TOKEN }}@github.com/Ticketeame/backend.git /tmp/test-backend && echo "backend: OK" || echo "backend: FAILED"
-          rm -rf /tmp/test-backend
-          git clone --depth=1 https://x-access-token:${{ secrets.METRICS_TOKEN }}@github.com/weiseratel/sysctl.git /tmp/test-sysctl && echo "sysctl: OK" || echo "sysctl: FAILED"
-          rm -rf /tmp/test-sysctl
       - uses: lowlighter/metrics@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.METRICS_TOKEN }}
         with:
           token: ${{ secrets.METRICS_TOKEN }}
           user: weiseratel
