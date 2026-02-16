@@ -29,27 +29,217 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: lowlighter/metrics@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.METRICS_TOKEN }}
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
         with:
+          repository: Ticketeame/backend
           token: ${{ secrets.METRICS_TOKEN }}
-          user: weiseratel
-          base: ""
-          plugin_languages: yes
-          plugin_languages_indepth: yes
-          plugin_languages_indepth_custom: Ticketeame/backend, Ticketeame/Infrastructure, weiseratel/sysctl, weiseratel/yumrepomanager
-          plugin_languages_limit: 8
-          plugin_languages_threshold: "2%"
-          plugin_languages_ignored: html, css, json, markdown, dockerfile, yaml, toml, ini, mako
-          plugin_languages_details: bytes-size, percentage
-          plugin_languages_sections: most-used
-          plugin_languages_colors: github
-          plugin_languages_analysis_timeout: 120
-          plugin_languages_analysis_timeout_repositories: 60
-          repositories_affiliations: owner, collaborator, organization_member
-          commits_authoring: >-
-            weiseratel, Josué V. Herrera, josh@ratelbau.com, vladernu@gmail.com, 109978789+weiseratel@users.noreply.github.com
-          filename: languages.svg
-          config_timezone: Europe/Madrid
-          debug: yes
+          path: .repos/backend
+          fetch-depth: 0
+
+      - uses: actions/checkout@v4
+        with:
+          repository: Ticketeame/Infrastructure
+          token: ${{ secrets.METRICS_TOKEN }}
+          path: .repos/infrastructure
+          fetch-depth: 0
+
+      - uses: actions/checkout@v4
+        with:
+          repository: weiseratel/sysctl
+          token: ${{ secrets.METRICS_TOKEN }}
+          path: .repos/sysctl
+          fetch-depth: 0
+
+      - uses: actions/checkout@v4
+        with:
+          repository: weiseratel/yumrepomanager
+          token: ${{ secrets.METRICS_TOKEN }}
+          path: .repos/yumrepomanager
+          fetch-depth: 0
+
+      - name: Analyze languages and generate SVG
+        run: |
+          python3 << 'PYEOF'
+          import subprocess, os, sys
+          from collections import defaultdict
+          from pathlib import Path
+
+          AUTHOR_PATTERN = "weiseratel\\|josh@ratelbau.com\\|vladernu@gmail.com\\|Josué V\\. Herrera\\|109978789+weiseratel@users.noreply.github.com"
+
+          EXT_TO_LANG = {
+              ".py": "Python", ".pyx": "Python", ".pyi": "Python",
+              ".cpp": "C++", ".cc": "C++", ".cxx": "C++", ".c": "C",
+              ".h": "C++", ".hpp": "C++",
+              ".sh": "Shell", ".bash": "Shell", ".zsh": "Shell",
+              ".sql": "SQL",
+              ".hcl": "HCL", ".tf": "HCL",
+              ".nix": "Nix",
+              ".pro": "QMake", ".pri": "QMake",
+              ".ui": "XML",
+              ".rs": "Rust", ".go": "Go", ".rb": "Ruby",
+              ".ts": "TypeScript", ".tsx": "TypeScript",
+              ".js": "JavaScript", ".jsx": "JavaScript",
+          }
+
+          IGNORED_EXTS = {
+              ".html", ".css", ".json", ".md", ".yml", ".yaml",
+              ".toml", ".ini", ".mako", ".txt", ".cfg", ".conf",
+              ".env", ".gitignore", ".lock", ".svg", ".png", ".jpg",
+              ".gif", ".ico", ".woff", ".woff2", ".eot", ".ttf",
+              ".map", ".min.js", ".min.css", ".pyc", ".pyo",
+              ".dockerfile", ".dockerignore", ".editorconfig",
+          }
+
+          LANG_COLORS = {
+              "Python": "#3572A5", "C++": "#f34b7d", "C": "#555555",
+              "Shell": "#89e051", "SQL": "#e38c00", "HCL": "#844fba",
+              "Nix": "#7e7eff", "QMake": "#0064b8", "XML": "#0060ac",
+              "Rust": "#dea584", "Go": "#00ADD8", "Ruby": "#701516",
+              "TypeScript": "#3178c6", "JavaScript": "#f1e05a",
+          }
+
+          REPOS = [".repos/backend", ".repos/infrastructure", ".repos/sysctl", ".repos/yumrepomanager"]
+
+          lang_lines = defaultdict(int)
+          total_commits = 0
+          total_files = set()
+
+          for repo_path in REPOS:
+              if not os.path.isdir(repo_path):
+                  print(f"Skipping {repo_path} (not found)")
+                  continue
+
+              result = subprocess.run(
+                  ["git", "log", "--all", f"--author={AUTHOR_PATTERN}",
+                   "--numstat", "--pretty=format:%H"],
+                  cwd=repo_path, capture_output=True, text=True, timeout=120,
+              )
+
+              commits_seen = set()
+              for line in result.stdout.strip().split("\n"):
+                  line = line.strip()
+                  if not line:
+                      continue
+                  parts = line.split("\t")
+                  if len(parts) == 1 and len(parts[0]) == 40:
+                      commits_seen.add(parts[0])
+                      continue
+                  if len(parts) != 3:
+                      continue
+                  added, deleted, filepath = parts
+                  if added == "-":
+                      continue
+
+                  ext = Path(filepath).suffix.lower()
+                  if ext in IGNORED_EXTS or not ext:
+                      continue
+
+                  lang = EXT_TO_LANG.get(ext)
+                  if not lang:
+                      continue
+
+                  lang_lines[lang] += int(added)
+                  total_files.add(f"{repo_path}/{filepath}")
+
+              total_commits += len(commits_seen)
+              print(f"{repo_path}: {len(commits_seen)} commits")
+
+          if not lang_lines:
+              print("No language data found!")
+              sys.exit(1)
+
+          sorted_langs = sorted(lang_lines.items(), key=lambda x: -x[1])
+          total = sum(v for _, v in sorted_langs)
+
+          # Apply 2% threshold
+          sorted_langs = [(k, v) for k, v in sorted_langs if v / total >= 0.02]
+          sorted_langs = sorted_langs[:8]
+          total = sum(v for _, v in sorted_langs)
+
+          print(f"\nTotal: {total_commits} commits, {len(total_files)} files")
+          for lang, lines in sorted_langs:
+              pct = lines / total * 100
+              print(f"  {lang}: {lines:,} lines ({pct:.1f}%)")
+
+          # Generate SVG
+          BAR_W = 460
+          LANG_H = 22
+          header_h = 58
+          lang_count = len(sorted_langs)
+          cols = 2
+          rows = (lang_count + cols - 1) // cols
+          body_h = rows * LANG_H + 12
+          svg_h = header_h + body_h + 8
+
+          bar_rects = []
+          x_offset = 0
+          for lang, lines in sorted_langs:
+              pct = lines / total
+              w = max(round(BAR_W * pct), 1)
+              color = LANG_COLORS.get(lang, "#959da5")
+              bar_rects.append(f'<rect mask="url(#bar)" x="{x_offset}" y="0" width="{w}" height="8" fill="{color}"/>')
+              x_offset += w
+
+          lang_entries_left = []
+          lang_entries_right = []
+          for i, (lang, lines) in enumerate(sorted_langs):
+              pct = lines / total * 100
+              color = LANG_COLORS.get(lang, "#959da5")
+
+              if lines >= 1_000_000:
+                  size_str = f"{lines/1_000_000:.2f} MB"
+              elif lines >= 1_000:
+                  size_str = f"{lines/1_000:.1f} kB"
+              else:
+                  size_str = f"{lines} B"
+
+              entry = f'''<div style="display:flex;align-items:center;margin:0 8px 2px;white-space:nowrap;justify-content:space-between">
+            <div style="display:flex;align-items:center">
+              <svg viewBox="0 0 16 16" width="16" height="16" style="margin:0 8px;flex-shrink:0"><circle cx="8" cy="8" r="4" fill="{color}"/></svg>
+              <span>{lang}</span>
+            </div>
+            <small style="color:#666;display:flex;gap:6px"><span>{size_str}</span><span>{pct:.1f}%</span></small>
+          </div>'''
+
+              if i % 2 == 0:
+                  lang_entries_left.append(entry)
+              else:
+                  lang_entries_right.append(entry)
+
+          estimation = f"estimation from {total_commits} commits across {len(REPOS)} repositories"
+
+          svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="480" height="{svg_h}">
+    <style>svg{{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;font-size:14px;color:#777}}</style>
+    <foreignObject x="0" y="0" width="100%" height="100%">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <section style="display:flex;flex-direction:column;align-items:center">
+          <h3 style="margin:8px 0 2px;color:#0366d6;font-weight:400;font-size:14px">Most used languages</h3>
+          <small style="color:#777">{estimation}</small>
+          <svg xmlns="http://www.w3.org/2000/svg" width="{BAR_W}" height="8" style="margin:4px 0">
+            <mask id="bar"><rect x="0" y="0" width="{BAR_W}" height="8" fill="white" rx="5"/></mask>
+            <rect mask="url(#bar)" x="0" y="0" width="{BAR_W}" height="8" fill="#d1d5da"/>
+            {"".join(bar_rects)}
+          </svg>
+          <div style="display:flex;width:100%">
+            <section style="flex:1 1 0">{"".join(lang_entries_left)}</section>
+            <section style="flex:1 1 0">{"".join(lang_entries_right)}</section>
+          </div>
+        </section>
+      </div>
+      <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
+    </foreignObject>
+  </svg>'''
+
+          with open("languages.svg", "w") as f:
+              f.write(svg)
+          print(f"\nGenerated languages.svg ({svg_h}px height, {lang_count} languages)")
+          PYEOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add languages.svg
+          git diff --staged --quiet || (git commit -m "chore: update languages" && git push)
