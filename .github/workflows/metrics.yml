@@ -29,8 +29,20 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Setup git credentials for org repos
-        run: git config --global url."https://${{ secrets.METRICS_TOKEN }}@github.com/".insteadOf "https://github.com/"
+      - name: Test token access to Ticketeame repos
+        env:
+          GH_TOKEN: ${{ secrets.METRICS_TOKEN }}
+        run: |
+          echo "Testing METRICS_TOKEN access to Ticketeame repos..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/Ticketeame/backend)
+          echo "Ticketeame/backend: HTTP $STATUS"
+          STATUS2=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/Ticketeame/Infrastructure)
+          echo "Ticketeame/Infrastructure: HTTP $STATUS2"
+          STATUS3=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/weiseratel/sysctl)
+          echo "weiseratel/sysctl: HTTP $STATUS3"
+          echo "---"
+          echo "If Ticketeame repos show 404/403, the METRICS_TOKEN needs org access."
+          echo "Go to: Settings > Developer Settings > PATs > Configure SSO > Authorize for Ticketeame"
       - uses: lowlighter/metrics@master
         with:
           token: ${{ secrets.METRICS_TOKEN }}
