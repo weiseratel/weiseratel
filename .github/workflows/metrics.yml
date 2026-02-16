@@ -29,20 +29,13 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Test token access to Ticketeame repos
-        env:
-          GH_TOKEN: ${{ secrets.METRICS_TOKEN }}
+      - name: Test git clone with token
         run: |
-          echo "Testing METRICS_TOKEN access to Ticketeame repos..."
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/Ticketeame/backend)
-          echo "Ticketeame/backend: HTTP $STATUS"
-          STATUS2=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/Ticketeame/Infrastructure)
-          echo "Ticketeame/Infrastructure: HTTP $STATUS2"
-          STATUS3=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/weiseratel/sysctl)
-          echo "weiseratel/sysctl: HTTP $STATUS3"
-          echo "---"
-          echo "If Ticketeame repos show 404/403, the METRICS_TOKEN needs org access."
-          echo "Go to: Settings > Developer Settings > PATs > Configure SSO > Authorize for Ticketeame"
+          echo "Testing git clone with METRICS_TOKEN..."
+          git clone --depth=1 https://x-access-token:${{ secrets.METRICS_TOKEN }}@github.com/Ticketeame/backend.git /tmp/test-backend && echo "backend: OK" || echo "backend: FAILED"
+          rm -rf /tmp/test-backend
+          git clone --depth=1 https://x-access-token:${{ secrets.METRICS_TOKEN }}@github.com/weiseratel/sysctl.git /tmp/test-sysctl && echo "sysctl: OK" || echo "sysctl: FAILED"
+          rm -rf /tmp/test-sysctl
       - uses: lowlighter/metrics@master
         with:
           token: ${{ secrets.METRICS_TOKEN }}
