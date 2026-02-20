@@ -4,7 +4,7 @@
 <div xmlns="http://www.w3.org/1999/xhtml">
 <section style="display:flex;flex-direction:column;align-items:center">
 <h3 style="margin:8px 0 2px;color:#0366d6;font-weight:400;font-size:14px">Most used languages</h3>
-<small style="color:#777">estimation from 2751 commits across 4 repositories</small>
+<small style="color:#777">estimation from 2762 commits across 4 repositories</small>
 <svg xmlns="http://www.w3.org/2000/svg" width="460" height="8" style="margin:4px 0">
 <mask id="bar"><rect x="0" y="0" width="460" height="8" fill="white" rx="5"/></mask>
 <rect mask="url(#bar)" x="0" y="0" width="460" height="8" fill="#d1d5da"/>
@@ -13,7 +13,7 @@
 <rect mask="url(#bar)" x="446" y="0" width="15" height="8" fill="#f34b7d"/>
 </svg>
 <div style="display:flex;width:100%">
-<section style="flex:1 1 0"><div style="display:flex;align-items:center;margin:0 8px 2px;white-space:nowrap;justify-content:space-between"><div style="display:flex;align-items:center"><svg viewBox="0 0 16 16" width="16" height="16" style="margin:0 8px;flex-shrink:0"><circle cx="8" cy="8" r="4" fill="#3572A5"/></svg><span>Python</span></div><small style="color:#666;display:flex;gap:6px"><span>942.4 kB</span><span>91.1%</span></small></div><div style="display:flex;align-items:center;margin:0 8px 2px;white-space:nowrap;justify-content:space-between"><div style="display:flex;align-items:center"><svg viewBox="0 0 16 16" width="16" height="16" style="margin:0 8px;flex-shrink:0"><circle cx="8" cy="8" r="4" fill="#f34b7d"/></svg><span>C++</span></div><small style="color:#666;display:flex;gap:6px"><span>32.7 kB</span><span>3.2%</span></small></div></section>
+<section style="flex:1 1 0"><div style="display:flex;align-items:center;margin:0 8px 2px;white-space:nowrap;justify-content:space-between"><div style="display:flex;align-items:center"><svg viewBox="0 0 16 16" width="16" height="16" style="margin:0 8px;flex-shrink:0"><circle cx="8" cy="8" r="4" fill="#3572A5"/></svg><span>Python</span></div><small style="color:#666;display:flex;gap:6px"><span>943.7 kB</span><span>91.1%</span></small></div><div style="display:flex;align-items:center;margin:0 8px 2px;white-space:nowrap;justify-content:space-between"><div style="display:flex;align-items:center"><svg viewBox="0 0 16 16" width="16" height="16" style="margin:0 8px;flex-shrink:0"><circle cx="8" cy="8" r="4" fill="#f34b7d"/></svg><span>C++</span></div><small style="color:#666;display:flex;gap:6px"><span>32.7 kB</span><span>3.2%</span></small></div></section>
 <section style="flex:1 1 0"><div style="display:flex;align-items:center;margin:0 8px 2px;white-space:nowrap;justify-content:space-between"><div style="display:flex;align-items:center"><svg viewBox="0 0 16 16" width="16" height="16" style="margin:0 8px;flex-shrink:0"><circle cx="8" cy="8" r="4" fill="#e38c00"/></svg><span>SQL</span></div><small style="color:#666;display:flex;gap:6px"><span>59.8 kB</span><span>5.8%</span></small></div></section>
 </div></section></div>
 <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
