@@ -4,7 +4,7 @@
 <div xmlns="http://www.w3.org/1999/xhtml">
 <section style="display:flex;flex-direction:column;align-items:center">
 <h3 style="margin:8px 0 2px;color:#0366d6;font-weight:400;font-size:14px">Most used languages</h3>
-<small style="color:#777">estimation from 7570 commits across 4 repositories</small>
+<small style="color:#777">estimation from 7577 commits across 4 repositories</small>
 <svg xmlns="http://www.w3.org/2000/svg" width="460" height="8" style="margin:4px 0">
 <mask id="bar"><rect x="0" y="0" width="460" height="8" fill="white" rx="5"/></mask>
 <rect mask="url(#bar)" x="0" y="0" width="460" height="8" fill="#d1d5da"/>
