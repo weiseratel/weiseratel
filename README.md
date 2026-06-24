@@ -1,35 +1,32 @@
 # Josué V. Herrera
 
-Backend Engineer & DevOps · Building reliable systems at scale
+Backend & platform engineer. I build financial systems in .NET and run them on Kubernetes. Based in Barcelona.
 
 ---
 
-### About
+### What I'm building
 
-I design and build backend systems with a focus on reliability, performance, and clean architecture. Currently working on an enterprise ticketing platform handling real-time inventory, payment processing, and high-concurrency operations.
+[**Ratelbau**](https://ratelbau.com) is a financial community platform I'm building: fundamental stock analysis, markets, portfolio optimization, and trading education. The codebase is private, so here is the shape of it.
 
-My work spans from API development to infrastructure optimization, with a strong emphasis on system security and performance tuning.
+- **Backend** — a .NET 10 modular monolith, hexagonal and CQRS. Six bounded contexts, each isolated by its own PostgreSQL schema, talking over an integration-event bus (Wolverine on RabbitMQ). Any module can leave for its own pod without rewriting a handler.
+- **Frontend** — Next.js 16 (App Router), React 19, TypeScript in strict mode, Tailwind v4.
+- **Quant** — a Python and FastAPI microservice for portfolio optimization with skfolio (Markowitz, Black-Litterman, HRP).
+- **Platform** — k3s on Hetzner, GitOps with ArgoCD, observability on Grafana Cloud. CI builds images to GHCR, an image updater writes the digest back to git, and ArgoCD reconciles the cluster.
 
----
-
-### Tech Stack
-
-**Backend:** Python · FastAPI · SQLAlchemy · PostgreSQL · Redis
-**Infrastructure:** Docker · Linux · Nginx · CI/CD
-**Architecture:** Clean Architecture · Domain-Driven Design · Event-Driven Systems
+Most of that work is private, so it shows up in my contribution activity rather than as public repositories.
 
 ---
 
-### Open Source
+### Tech
 
-- **[sysctl](https://github.com/weiseratel/sysctl)** — Linux kernel optimizations for server performance and security
-- **[yumrepomanager](https://github.com/weiseratel/yumrepomanager)** — Graphical tool for YUM repository management (C++)
+`.NET 10` · `C# 14` · `PostgreSQL` · `Wolverine` · `RabbitMQ` · `Kubernetes` · `ArgoCD` · `Next.js` · `Python`
 
 ---
 
-<img src="https://raw.githubusercontent.com/weiseratel/weiseratel/main/stats.svg" alt="GitHub Stats" />
+### Open source
 
-<img src="https://raw.githubusercontent.com/weiseratel/weiseratel/main/languages.svg" alt="Top Languages" />
+- **[sysctl](https://github.com/weiseratel/sysctl)** — Linux kernel tuning for server performance and security.
+- **[yumrepomanager](https://github.com/weiseratel/yumrepomanager)** — a graphical YUM repository manager, written in C++.
 
 ---
 
